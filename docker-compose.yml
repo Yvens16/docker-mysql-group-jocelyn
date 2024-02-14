@@ -1,0 +1,41 @@
+services:
+  backend:
+    build:
+      context: .
+      target: dev
+    ports:
+      - "9003:8080"
+    volumes:
+      - ./:/workspace/app
+    depends_on:
+      - mysqldb
+    restart: always
+    networks:
+      - spring-mysql-network
+    environment:
+      MYSQL_HOST: jdbc:mysql://mysqldb:3306/dockerDb?createDatabaseIfNotExist=true
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: dockerDb
+      MYSQL_USER: yvens
+      MYSQL_PASSWORD: yvens_password
+
+  mysqldb:
+    image: "mysql:8.2.0"
+    volumes:
+      - docker-mysql-volume:/var/lib/mysql
+    restart: always
+    ports:
+      - '3306:3306'
+    expose:
+      - 3306
+    networks:
+      - spring-mysql-network
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: dockerDb
+      MYSQL_USER: yvens
+      MYSQL_PASSWORD: yvens_password
+volumes:
+  docker-mysql-volume:
+networks:
+  spring-mysql-network:
